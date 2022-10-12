@@ -1,0 +1,574 @@
+<html>
+
+<head>
+    <title></title>
+    <script>
+
+        function getSubnetByClass() {
+            const subNetMask = [
+                "128.0.0.0",
+                "192.0.0.0",
+                "224.0.0.0",
+                "240.0.0.0",
+                "248.0.0.0",
+                "252.0.0.0",
+                "254.0.0.0",
+                "255.0.0.0",
+                "255.128.0.0",
+                "255.192.0.0",
+                "255.224.0.0",
+                "255.240.0.0",
+                "255.248.0.0",
+                "255.252.0.0",
+                "255.254.0.0",
+                "255.255.0.0",
+                "255.255.128.0",
+                "255.255.192.0",
+                "255.255.224.0",
+                "255.255.240.0",
+                "255.255.248.0",
+                "255.255.252.0",
+                "255.255.254.0",
+                "255.255.255.0",
+                "255.255.255.128",
+                "255.255.255.192",
+                "255.255.255.224",
+                "255.255.255.240",
+                "255.255.255.248",
+                "255.255.255.252",
+                "255.255.255.254",
+                "255.255.255.255"
+            ];
+            {
+                var ele = document.getElementsByName('class');
+                var checkClass;
+                var startIndex = 0; stopIndex = 32;
+                for (i = 0; i < ele.length; i++) {
+                    if (ele[i].checked)
+                        checkClass = document.getElementById('test').value = ele[i].value;
+                }
+
+                if (checkClass == 'A') {
+                    startIndex = 7;
+                    stopIndex = 32;
+                }
+                for (var i = 0; i < elmts.length; i++) {
+                    var optn = subNetMask[i];
+                    var el = document.createElement("option");
+                    el.textContent = optn;
+                    el.value = optn;
+                    select.appendChild(el);
+                }
+
+            }
+        }
+
+        function callAllMethod() {
+            getIPAddress();
+            getIPType();
+            getCIDR();
+            getSubNetMask();
+            getTotalNumberOfHosts();
+            getUsableHosts();
+            getWildCard();
+            getShort();
+            getBinaryID();
+            getHexID();
+            getIPClass();
+        }
+
+        function clearAllTextField() {
+            document.getElementById("outBinaryID").value = "";
+            document.getElementById("outBinarySubnet").value = "";
+            document.getElementById("outBroadcastAddress").value = "";
+            document.getElementById("outCIDR").value = "";
+            document.getElementById("outHexID").value = "";
+            document.getElementById("outIntegerID").value = "";
+            document.getElementById("outIPAddress").value = "";
+            document.getElementById("outIPClass").value = "";
+            document.getElementById("outIPRange").value = "";
+            document.getElementById("outIPType").value = "";
+            document.getElementById("outNetAddress").value = "";
+            document.getElementById("outShort").value = "";
+            document.getElementById("outSubnetMask").value = "";
+            document.getElementById("outTotalNumberOfHosts").value = "";
+            document.getElementById("outUsableHosts").value = "";
+            document.getElementById("outWildcard").value = "";
+            document.getElementById("inputIPAddress").value = "";
+        }
+
+        function getIPAddress() {
+            var IPAddress = document.getElementById('inputIPAddress').value;
+            document.getElementById('outIPAddress').value = IPAddress;
+        }
+
+        function getIPType() {
+            let value = document.getElementById('inputIPAddress').value;
+            let IPAddress = value.toString();
+            if (IPAddress.substring(0, 2) == "10") {
+                document.getElementById('outIPType').value = "Private";
+
+            }
+            else if (IPAddress.substring(0, 3) == "192" && IPAddress.substring(4, 7) == "168") {
+                document.getElementById('outIPType').value = "Private";
+
+            }
+            else if (IPAddress.substring(0, 3) == "172") {
+                for (let i = 16; i < 32; i++) {
+                    let temp = i.toString();
+                    let temp2 = IPAddress.substring(4, 6)
+                    if (temp2.localeCompare(temp) == 0) {
+                        document.getElementById('outIPType').value = "Private";
+                        break;
+                    } else {
+                        document.getElementById('outIPType').value = "Public";
+                    }
+                }
+            }
+            else {
+                document.getElementById('outIPType').value = "Public";
+            }
+        }
+
+        function getCIDR() {
+            let value = document.getElementById('SelectedSubnet').value;
+            let CIDR = value.toString();
+            document.getElementById("outCIDR").value = CIDR;
+            let NetworkBi = getNetworkAddress(CIDR);
+            let BroadcastBi = getBroadCastAddress(CIDR);
+            getIPRange(NetworkBi, BroadcastBi);
+        }
+
+        function getSubNetMask() {
+            let value = document.getElementById('SelectedSubnet').value;
+            let subNetIndex = value.substring(1, 3);
+            const subNetMask = [
+                "128.0.0.0",
+                "192.0.0.0",
+                "224.0.0.0",
+                "240.0.0.0",
+                "248.0.0.0",
+                "252.0.0.0",
+                "254.0.0.0",
+                "255.0.0.0",
+                "255.128.0.0",
+                "255.192.0.0",
+                "255.224.0.0",
+                "255.240.0.0",
+                "255.248.0.0",
+                "255.252.0.0",
+                "255.254.0.0",
+                "255.255.0.0",
+                "255.255.128.0",
+                "255.255.192.0",
+                "255.255.224.0",
+                "255.255.240.0",
+                "255.255.248.0",
+                "255.255.252.0",
+                "255.255.254.0",
+                "255.255.255.0",
+                "255.255.255.128",
+                "255.255.255.192",
+                "255.255.255.224",
+                "255.255.255.240",
+                "255.255.255.248",
+                "255.255.255.252",
+                "255.255.255.254",
+                "255.255.255.255"
+            ];
+            document.getElementById("outSubnetMask").value = subNetMask[subNetIndex - 1];
+            getBinarySubnet(subNetMask[subNetIndex - 1]);
+        }
+
+        function getTotalNumberOfHosts() {
+            let value = document.getElementById('SelectedSubnet').value;
+            let index = value.substring(1, 3);
+            const TotalNumberOfHosts = [
+                "4,294,967,296",
+                "2,147,483,648",
+                "1,073,741,824",
+                "536,870,912",
+                "268,435,456",
+                "134,217,728",
+                "67,108,864",
+                "33,554,432",
+                "16,777,216",
+                "8,388,608",
+                "4,194,304",
+                "2,097,152",
+                "1,048,576",
+                "524,288",
+                "262,144",
+                "131,072",
+                "65,536",
+                "32,768",
+                "16,384",
+                "8,192",
+                "4,096",
+                "2,048",
+                "1,024",
+                "512",
+                "256",
+                "128",
+                "64",
+                "32",
+                "16",
+                "8",
+                "4",
+                "2",
+                "1"
+            ];
+            document.getElementById("outTotalNumberOfHosts").value = TotalNumberOfHosts[index];
+        }
+
+        function getUsableHosts() {
+            let value = document.getElementById('SelectedSubnet').value;
+            let index = value.substring(1, 3);
+            const UsableHosts = [
+                "4,294,967,294",
+                "2,147,483,646",
+                "1,073,741,822",
+                "536,870,910",
+                "268,435,454",
+                "134,217,726",
+                "67,108,862",
+                "33,554,430",
+                "16,777,214",
+                "8,388,606",
+                "4,194,302",
+                "2,097,150",
+                "1,048,574",
+                "524,286",
+                "262,142",
+                "131,070",
+                "65,534",
+                "32,766",
+                "16,382",
+                "8,190",
+                "4,094",
+                "2,046",
+                "1,022",
+                "510",
+                "254",
+                "126",
+                "62",
+                "30",
+                "14",
+                "6",
+                "2",
+                "0",
+                "0"
+            ];
+            document.getElementById("outUsableHosts").value = UsableHosts[index];
+        }
+
+        function getWildCard() {
+            let value = document.getElementById('SelectedSubnet').value;
+            let index = value.substring(1, 3);
+            const WildCard = [
+                "255.255.255.255",
+                "127.255.255.255",
+                "63.255.255.255",
+                "31.255.255.255",
+                "15.255.255.255",
+                "7.255.255.255",
+                "3.255.255.255",
+                "1.255.255.255",
+                "0.255.255.255",
+                "0.127.255.255",
+                "0.63.255.255",
+                "0.31.255.255",
+                "0.15.255.255",
+                "0.7.255.255",
+                "0.3.255.255",
+                "0.1.255.255",
+                "0.0.255.255",
+                "0.0.127.255",
+                "0.0.63.255",
+                "0.0.31.255",
+                "0.0.15.255",
+                "0.0.7.255",
+                "0.0.3.255",
+                "0.0.1.255",
+                "0.0.0.255",
+                "0.0.0.127",
+                "0.0.0.63",
+                "0.0.0.31",
+                "0.0.0.15",
+                "0.0.0.7",
+                "0.0.0.3",
+                "0.0.0.1",
+                "0.0.0.0"
+            ];
+            document.getElementById("outWildcard").value = WildCard[index];
+        }
+
+        function getShort() {
+            let short = document.getElementById("outIPAddress").value + " " + document.getElementById("outCIDR").value;
+            document.getElementById("outShort").value = short;
+        }
+
+        function getHexID() {
+            var IPAddress = document.getElementById('inputIPAddress').value;
+            const IPArray = IPAddress.split(".");
+            var hexStr = "0x";
+            for (let i = 0; i < IPArray.length; i++) {
+                let temp = parseInt(IPArray[i]).toString(16).padStart(2, "0");
+                hexStr = hexStr + temp;
+            }
+            document.getElementById('outHexID').value = hexStr;
+        }
+
+        function getBinaryID() {
+            var IPAddress = document.getElementById('inputIPAddress').value;
+            const IPArray = IPAddress.split(".");
+            var BinaryID = "";
+            for (let i = 0; i < IPArray.length; i++) {
+                let temp = parseInt(IPArray[i], 10).toString(2).padStart(8, "0");
+                BinaryID = BinaryID + temp;
+            }
+            document.getElementById('outBinaryID').value = BinaryID;
+            getIntID(BinaryID);
+            return BinaryID;
+        }
+
+        function getIntID(BinaryID) {
+            var IntID = parseInt(BinaryID, 2);
+            document.getElementById('outIntegerID').value = IntID;
+        }
+
+        function getBinarySubnet(subNetMask) {
+            var binarySubnet = "";
+            const subNetArray = subNetMask.split(".");
+            for (let i = 0; i < subNetArray.length; i++) {
+                if (i == subNetArray.length - 1) {
+                    let temp = parseInt(subNetArray[i], 10).toString(2).padStart(8, "0");
+                    binarySubnet = binarySubnet + temp;
+                } else {
+                    let temp = parseInt(subNetArray[i], 10).toString(2).padStart(8, "0");
+                    binarySubnet = binarySubnet + temp + "."
+                }
+            }
+            document.getElementById('outBinarySubnet').value = binarySubnet;
+        }
+
+        function getNetworkAddress(CIDR) {
+            let CIDRnumber = parseInt(CIDR.substring(1, 3));
+            let BinaryID = getBinaryID().substring(0, CIDRnumber);
+            var NetworkAddress = "";
+            var StartIndex = 0;
+            var StopIndex = 8;
+            for (let i = 0; i < 32 - CIDRnumber; i++) {
+                BinaryID = BinaryID + "0";
+            }
+            for (let i = 0; i < 4; i++) {
+                if (i == 0) {
+                    NetworkAddress = NetworkAddress + parseInt(BinaryID.substring(StartIndex, StopIndex), 2);
+                    StartIndex = StartIndex + 8;
+                    StopIndex = StopIndex + 8;
+
+                } else {
+                    NetworkAddress = NetworkAddress + "." + parseInt(BinaryID.substring(StartIndex, StopIndex), 2);
+                    StartIndex = StartIndex + 8;
+                    StopIndex = StopIndex + 8;
+                }
+            }
+            document.getElementById("outNetAddress").value = NetworkAddress;
+            return BinaryID;
+        }
+
+        function getBroadCastAddress(CIDR) {
+            let CIDRnumber = parseInt(CIDR.substring(1, 3));
+            let BinaryID = getBinaryID().substring(0, CIDRnumber);
+            var BroadCastAddress = "";
+            var StartIndex = 0;
+            var StopIndex = 8;
+            for (let i = 0; i < 32 - CIDRnumber; i++) {
+                BinaryID = BinaryID + "1";
+            }
+            for (let i = 0; i < 4; i++) {
+                if (i == 0) {
+                    BroadCastAddress = BroadCastAddress + parseInt(BinaryID.substring(StartIndex, StopIndex), 2);
+                    StartIndex = StartIndex + 8;
+                    StopIndex = StopIndex + 8;
+
+                } else {
+                    BroadCastAddress = BroadCastAddress + "." + parseInt(BinaryID.substring(StartIndex, StopIndex), 2);
+                    StartIndex = StartIndex + 8;
+                    StopIndex = StopIndex + 8;
+                }
+            }
+            document.getElementById("outBroadcastAddress").value = BroadCastAddress;
+            return BinaryID;
+        }
+
+        function getIPRange(NetworkBi, BroadCastBi) {
+            let startBi = NetworkBi.substring(0, NetworkBi.length - 1) + "1";
+            let stopBi = BroadCastBi.substring(0, BroadCastBi.length - 1) + "0";
+            var StartIndex = 0;
+            var StopIndex = 8;
+            var startRange = "";
+            var stopRange = "";
+            for (let i = 0; i < 4; i++) {
+                if (i == 0) {
+                    startRange = startRange + parseInt(startBi.substring(StartIndex, StopIndex), 2);
+                    stopRange = stopRange + parseInt(stopBi.substring(StartIndex, StopIndex), 2);
+                    StartIndex = StartIndex + 8;
+                    StopIndex = StopIndex + 8;
+
+                } else {
+                    startRange = startRange + "." + parseInt(startBi.substring(StartIndex, StopIndex), 2);
+                    stopRange = stopRange + "." + parseInt(stopBi.substring(StartIndex, StopIndex), 2);
+                    StartIndex = StartIndex + 8;
+                    StopIndex = StopIndex + 8;
+                }
+            }
+            if (parseInt(startRange.replaceAll('.', '')) - parseInt(stopRange.replaceAll('.', '')) == 1 || parseInt(startRange.replaceAll('.', '')) - parseInt(stopRange.replaceAll('.', '')) == -1) {
+                document.getElementById("outIPRange").value = "NA";
+            } else {
+                document.getElementById("outIPRange").value = startRange + " - " + stopRange;
+            }
+        }
+
+        function getIPClass() {
+            let BinaryID = getBinaryID();
+            if (BinaryID.charAt(0) == '0') {
+                document.getElementById("outIPClass").value = "A";
+            }
+            else if (BinaryID.substring(0, 2) == "10") {
+                document.getElementById("outIPClass").value = "B";
+            }
+            else if (BinaryID.substring(0, 3) == "110") {
+                document.getElementById("outIPClass").value = "C";
+            }
+            else if (BinaryID.substring(0, 4) == "1110") {
+                document.getElementById("outIPClass").value = "D";
+            }
+            else if (BinaryID.substring(0, 4) == "1111") {
+                document.getElementById("outIPClass").value = "E";
+            } else {
+                document.getElementById("outIPClass").value = "NA";
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1 style="font-family:Arial, Helvetica, sans-serif">IPv4 Subnet Calculator</h1>
+    <p style="font-family:Arial, Helvetica, sans-serif">This calculator returns a variety of information regarding
+        Internet Protocol version 4 (IPv4) subnets including</p>
+    <p style="font-family:Arial, Helvetica, sans-serif">possible network addresses, usable host ranges, subnet mask, and
+        IP class, among others.</p>
+    <fieldset style="width:50%">
+        <legend>
+            <h2 style="font-family:Arial, Helvetica, sans-serif">Input</h2>
+        </legend>
+        <label style="font-family:Arial, Helvetica, sans-serif">Network Class : </label>
+        <input type="radio" id="Any" name="class" value="Any" onclick="getSubnetByClass()">
+        <label for="Any" style="font-family:Arial, Helvetica, sans-serif">Any</label>
+        <input type="radio" id="A" name="class" value="A" onclick="getSubnetByClass()">
+        <label for="A" style="font-family:Arial, Helvetica, sans-serif">A</label>
+        <input type="radio" id="B" name="class" value="B" onclick="getSubnetByClass()">
+        <label for="B" style="font-family:Arial, Helvetica, sans-serif">B</label>
+        <input type="radio" id="C" name="class" value="C" onclick="getSubnetByClass()">
+        <label for="C" style="font-family:Arial, Helvetica, sans-serif">C</label>
+        <br><br>
+        <label style="font-family:Arial, Helvetica, sans-serif">IP Address : </label>
+        <input type="text" id="inputIPAddress" style="width:100%">
+        <br><br>
+
+        <label for="subnet" style="font-family:Arial, Helvetica, sans-serif">Subnet : </label>
+        <select name="subnet" id="SelectedSubnet" style="width:100%">
+            <option value="/1">128.0.0.0 /1</option>
+            <option value="/2">192.0.0.0 /2</option>
+            <option value="/3">224.0.0.0 /3</option>
+            <option value="/4">240.0.0.0 /4</option>
+            <option value="/5">248.0.0.0 /5</option>
+            <option value="/6">252.0.0.0 /6</option>
+            <option value="/7">254.0.0.0 /7</option>
+            <option value="/8">255.0.0.0 /8</option>
+            <option value="/9">255.128.0.0 /9</option>
+            <option value="/10">255.192.0.0 /10</option>
+            <option value="/11">255.224.0.0 /11</option>
+            <option value="/12">255.240.0.0 /12</option>
+            <option value="/13">255.248.0.0 /13</option>
+            <option value="/14">255.252.0.0 /14</option>
+            <option value="/15">255.254.0.0 /15</option>
+            <option value="/16">255.255.0.0 /16</option>
+            <option value="/17">255.255.128.0 /17</option>
+            <option value="/18">255.255.192.0 /18</option>
+            <option value="/19">255.255.224.0 /19</option>
+            <option value="/20">255.255.240.0 /20</option>
+            <option value="/21">255.255.248.0 /21</option>
+            <option value="/22">255.255.252.0 /22</option>
+            <option value="/23">255.255.254.0 /23</option>
+            <option value="/24">255.255.255.0 /24</option>
+            <option value="/25">255.255.255.128 /25</option>
+            <option value="/26">255.255.255.192 /26</option>
+            <option value="/27">255.255.255.224 /27</option>
+            <option value="/28">255.255.255.240 /28</option>
+            <option value="/29">255.255.255.248 /29</option>
+            <option value="/30">255.255.255.252 /30</option>
+            <option value="/31">255.255.255.254 /31</option>
+            <option value="/32">255.255.255.255 /32</option>
+        </select><br><br>
+        <button type="button" id="calculate" onclick="callAllMethod()"
+            style="font-family:Arial, Helvetica, sans-serif">Calculate</button>
+        <button type="button" id="clear" onclick="clearAllTextField()"
+            style="font-family:Arial, Helvetica, sans-serif">Clear</button><br><br>
+    </fieldset>
+    <fieldset style="width:50%">
+        <legend>
+            <h2 style="font-family:Arial, Helvetica, sans-serif">Result</h2>
+        </legend>
+        <label style="font-family:Arial, Helvetica, sans-serif">IP Address : </label>
+        <input type="text" id="outIPAddress" disabled="disabled" style="width:100%"><br><br>
+
+        <label style="font-family:Arial, Helvetica, sans-serif">Network Address : </label>
+        <input type="text" id="outNetAddress" disabled="disabled" style="width:100%"><br><br>
+
+        <label style="font-family:Arial, Helvetica, sans-serif">Usable Host IP Range : </label>
+        <input type="text" id="outIPRange" disabled="disabled" style="width:100%"><br><br>
+
+        <label style="font-family:Arial, Helvetica, sans-serif">Broadcast Address : </label>
+        <input type="text" id="outBroadcastAddress" disabled="disabled" style="width:100%"><br><br>
+
+        <label style="font-family:Arial, Helvetica, sans-serif">Total Number of Hosts : </label>
+        <input type="text" id="outTotalNumberOfHosts" disabled="disabled" style="width:100%"><br><br>
+
+        <label style="font-family:Arial, Helvetica, sans-serif">Number of Usable Hosts : </label>
+        <input type="text" id="outUsableHosts" disabled="disabled" style="width:100%"><br><br>
+
+        <label style="font-family:Arial, Helvetica, sans-serif">Subnet Mask : </label>
+        <input type="text" id="outSubnetMask" disabled="disabled" style="width:100%"><br><br>
+
+        <label style="font-family:Arial, Helvetica, sans-serif">Wildcard Mask : </label>
+        <input type="text" id="outWildcard" disabled="disabled" style="width:100%"><br><br>
+
+        <label style="font-family:Arial, Helvetica, sans-serif">Binary Subnet Mask : </label>
+        <input type="text" id="outBinarySubnet" disabled="disabled" style="width:100%"><br><br>
+
+        <label style="font-family:Arial, Helvetica, sans-serif">IP Class : </label>
+        <input type="text" id="outIPClass" disabled="disabled" style="width:100%"><br><br>
+
+        <label style="font-family:Arial, Helvetica, sans-serif">CIDR Notation : </label>
+        <input type="text" id="outCIDR" disabled="disabled" style="width:100%"><br><br>
+
+        <label style="font-family:Arial, Helvetica, sans-serif">IP Type : </label>
+        <input type="text" id="outIPType" disabled="disabled" style="width:100%"><br><br>
+
+        <label style="font-family:Arial, Helvetica, sans-serif">Short : </label>
+        <input type="text" id="outShort" disabled="disabled" style="width:100%"><br><br>
+
+        <label style="font-family:Arial, Helvetica, sans-serif">Binary ID : </label>
+        <input type="text" id="outBinaryID" disabled="disabled" style="width:100%"><br><br>
+
+        <label style="font-family:Arial, Helvetica, sans-serif">Integer ID : </label>
+        <input type="text" id="outIntegerID" disabled="disabled" style="width:100%"><br><br>
+
+        <label style="font-family:Arial, Helvetica, sans-serif">Hex ID : </label>
+        <input type="text" id="outHexID" disabled="disabled" style="width:100%"><br><br>
+    </fieldset>
+</body>
+
+</html>
